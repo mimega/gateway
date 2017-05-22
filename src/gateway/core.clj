@@ -2,6 +2,7 @@
   (:gen-class)
   (:use org.httpkit.server
         [clojure.tools.logging :as log]
+        [org.httpkit.client :as http]
         [clojure.core.async
              :as a
              :refer [>! <! >!! <!! go chan buffer close! thread
@@ -25,7 +26,7 @@
         wait-time (Integer/parseInt (:time params))
         resp (:response params)]
     (with-channel request channel
-      (go (Thread/sleep wait-time)
+      (go (<! (timeout wait-time))
           (respond-to channel resp)))))
 
 (defroutes routes
@@ -35,4 +36,6 @@
 (defn -main [& args]
   (run-server (-> #'routes site)
               {:port 9898})
-  (log-text "server started. http://127.0.0.1:9898"))
+  (log/info (str "clojure.core.async.pool-size=" (System/getProperty "clojure.core.async.pool-size")))
+  (log/info "server started. http://127.0.0.1:9898")
+  )
