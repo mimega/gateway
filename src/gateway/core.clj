@@ -45,9 +45,3 @@
   (log/info (str "clojure.core.async.pool-size=" (System/getProperty "clojure.core.async.pool-size")))
   (log/info "server started. http://127.0.0.1:9898")
   )
-
-
-
-
-
-(defn test2 [] (services/make-random-call))

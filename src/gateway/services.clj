@@ -34,9 +34,6 @@
               (do (print "F") (flush))
               (do (print ".") (flush))))))
 
-(defn call-number [nr]
-  (perform-call (:check-number operation-table) {:number nr}))
-
 (defn make-random-call []
   (-> operations
       (get (rand-int 4))
