@@ -2,7 +2,7 @@
   (:gen-class)
   (:use org.httpkit.server
         [clojure.tools.logging :as log]
-        [org.httpkit.client :as http]
+        ; [org.httpkit.client :as http] ; TODO: later make proper async calls to handlers
         [clojure.core.async
              :as a
              :refer [>! <! >!! <!! go chan buffer close! thread
