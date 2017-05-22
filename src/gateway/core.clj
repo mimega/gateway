@@ -1,12 +1,13 @@
 (ns gateway.core
   (:gen-class)
-  (:use org.httpkit.server
+  (:require org.httpkit.server
+        [gateway.services :as services]
         [clojure.tools.logging :as log]
-        ; [org.httpkit.client :as http] ; TODO: later make proper async calls to handlers
         [clojure.core.async
              :as a
              :refer [>! <! >!! <!! go chan buffer close! thread
-                     alts! alts!! timeout]]
+                     alts! alts!! timeout]])
+  (:use org.httpkit.server
         (compojure [core :only [defroutes GET POST]]
                    [handler :only [site]]
                    [route :only [files not-found]])))
@@ -26,7 +27,8 @@
         wait-time (Integer/parseInt (:time params))
         resp (:response params)]
     (with-channel request channel
-      (go (<! (timeout wait-time))
+      (go ; (<! (timeout wait-time)) ; this was just to fake it
+          (services/make-random-call) ; this is a real call
           (respond-to channel resp)))))
 
 (defroutes routes
@@ -35,7 +37,17 @@
 
 (defn -main [& args]
   (run-server (-> #'routes site)
-              {:port 9898})
+              {:port 9898
+               ; Potential tweaks:
+               ; :thread 20
+               ; :queue-size 99000
+              })
   (log/info (str "clojure.core.async.pool-size=" (System/getProperty "clojure.core.async.pool-size")))
   (log/info "server started. http://127.0.0.1:9898")
   )
+
+
+
+
+
+(defn test2 [] (services/make-random-call))
